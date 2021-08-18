@@ -1,0 +1,74 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/Memory.hdl
+
+/**
+ * The complete address space of the Hack computer's memory,
+ * including RAM and memory-mapped I/O. 
+ * The chip facilitates read and write operations, as follows:
+ *     Read:  out(t) = Memory[address(t)](t)
+ *     Write: if load(t-1) then Memory[address(t-1)](t) = in(t-1)
+ * In words: the chip always outputs the value stored at the memory 
+ * location specified by address. If load==1, the in value is loaded 
+ * into the memory location specified by address. This value becomes 
+ * available through the out output from the next time step onward.
+ * Address space rules:
+ * Only the upper 16K+8K+1 words of the Memory chip are used. 
+ * Access to address>0x6000 is invalid. Access to any address in 
+ * the range 0x4000-0x5FFF results in accessing the screen memory 
+ * map. Access to address 0x6000 results in accessing the keyboard 
+ * memory map. The behavior in these addresses is described in the 
+ * Screen and Keyboard chip specifications given in the book.
+ */
+
+CHIP Memory {
+    IN in[16], load, address[15];
+    OUT out[16];
+
+    PARTS:
+    // Put your code here:
+    // decide the loead based on address[0] 
+    DMux(in=load,sel=address[14],a=f1,b=f2);
+
+    //RAM16K(in=in,load=load1,address=address[1..14],out=ram1);
+    RAM16K(in=in,load=f1,address=address[0..13],out=ram16);
+
+    //check address[1]
+    DMux(in=f2,sel=address[13],a=f3,b=f4);
+   
+    //if address[1]=0 go to screen
+    Screen(in=in,load=f3,address=address[0..12],out=screen);
+
+    //check if [0..12] has 0
+    Or8Way(in=address[0..7],out=out1);
+    Or8Way(in[0..4]=address[8..12],in[5..7]=false,out=out2);
+    Or(a=out1,b=out2,out=out3);
+
+    //if address[1]=0 go to check the rest
+    //if 1,1 get the keyboard info
+    Keyboard(out=keyboard);
+
+    //Choose between the key board and False
+    //decide keyboard or False based on  "out3"
+    Mux16(a=keyboard,b=false,sel=out3,out=kbdOrFalse);
+    //deicde kbdOrFalse or screen
+    Mux16(a=screen,b=kbdOrFalse,sel=address[13],out=kbdfOrScreen);
+    //decide screen or ram
+    Mux16(a=ram16,b=kbdfOrScreen,sel=address[14],out=out);
+
+
+    //choose which part to output
+    //Mux4Way16(a=ram1,b=ram2,c=sceen,d=keyboard,sel=address[0..1],out=out);
+
+}
+
+
+
+
+
+
+
+
+
+

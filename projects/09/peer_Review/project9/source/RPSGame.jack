@@ -1,0 +1,166 @@
+/* Plays rock paper scissors and keeps track of score */
+
+class RPSGame {
+    field int computerScore, playerScore;
+    field int computerMove, playerMove; // 0 = rock, 1 = paper, 2 = scissors
+    field String resultString, computerString, playerString;
+    field int firstRound; // 0 false, 1 true
+    field int gameOver; // 0 false, 1 true
+
+    /* initialize variables and print welcome message on screen */
+    constructor RPSGame new(){
+        let computerScore = 0;
+        let playerScore = 0;
+        let computerMove = 0;
+        let playerMove = 0;
+        let computerString = "";
+        let playerString = "";
+        let firstRound = 1;
+        let gameOver = 0;
+        do initializeScreen(); 
+        return this;
+    }
+
+    /* draw banner with scores at top, banner with instructions at left, and welcome message at center */
+    method void initializeScreen(){
+        do GameScreen.drawBorder();
+        do GameScreen.scoreBanner(computerScore, playerScore);
+        do GameScreen.instructionBanner();
+        do GameScreen.welcome();
+        do Sys.wait(3000);
+        return;
+    }
+
+    /* plays a single round of rock paper scissors */
+    method void playRound(){
+        var int counter;
+        var Array countdownArray;
+        var int keySelected;
+        var int seed;
+
+        // if first round, prompt user to press spacebar to start
+        if (firstRound = 1){
+            do GameScreen.clearScreen();
+            do Output.moveCursor(11,13);
+            do Output.printString("Press spacebar to start first round");
+            let firstRound = 0;
+        }
+
+        // wait for spacebar to be pressed to start round
+        while (~(Keyboard.keyPressed() = 32)){
+        }
+
+        // Get player selection before starting countdown
+        do GameScreen.clearScreen();
+        do Output.moveCursor(11, 13);
+        do Output.printString("Enter your selection now");
+        while ((~(keySelected = 48)) & (~(keySelected = 49)) & (~(keySelected = 50))){
+            let keySelected = Keyboard.keyPressed();
+        }
+        if (keySelected = 48){
+            let playerMove = 0;
+            let playerString = "Rock";
+        }
+
+        if (keySelected = 49) {
+            let playerMove = 1;
+            let playerString = "Paper";
+        }
+
+        if (keySelected = 50) {
+            let playerMove = 2;
+            let playerString = "Scissors";
+        }
+        // initialize variables for countdown
+        let counter = 0;
+        let countdownArray = Array.new(4);
+        let countdownArray[0] = "ROCK!";
+        let countdownArray[1] = "PAPER!";
+        let countdownArray[2] = "SCISSORS!";
+        let countdownArray[3] = "SHOOT!";
+
+
+        // Countdown to result. Wait half second between messages
+        while (counter < 4){
+            do GameScreen.clearScreen();
+            do Output.moveCursor(11, 20);
+            do Output.printString(countdownArray[counter]);
+            let counter = counter + 1;
+            do Sys.wait(500);
+        }
+            
+         // get computer selection - random integer between 0 and 2 inclusive
+        let seed = Random.rand();
+        do Random.setSeed(seed);
+        let computerMove = Random.randRange(2);
+
+        // determine winner of round based on CPU and player moves
+        if (computerMove = 0) {
+            let computerString = "Rock";
+            if (playerMove = 0){
+                let resultString = "Tie!";
+            }
+            if (playerMove = 1){
+                let resultString = "Player Wins!";
+                let playerScore = playerScore + 1;
+            }
+            if (playerMove = 2){
+                let resultString = "Computer Wins!";
+                let computerScore = computerScore + 1;
+            }
+        }
+        if (computerMove = 1) {
+            let computerString = "Paper";
+            if (playerMove = 0){
+                let resultString = "Computer Wins!";
+                let computerScore = computerScore + 1;
+            }
+            if (playerMove = 1){
+                let resultString = "Tie!";
+            }
+            if (playerMove = 2){
+                let resultString = "Player Wins!";
+                let playerScore = playerScore + 1;
+            }
+        }
+        if (computerMove = 2) {
+            let computerString = "Scissors";
+            if (playerMove = 0){
+                let resultString = "Player Wins!";
+                let playerScore = playerScore + 1;
+            }
+            if (playerMove = 1){
+                let resultString = "Computer Wins!";
+                let computerScore = computerScore + 1;
+            }
+            if (playerMove = 2){
+                let resultString = "Tie!";
+            }
+        }
+        // determine if game is over - best of 5 
+        if (playerScore = 3 | computerScore = 3){
+            let gameOver = 1;
+        }
+        // display results 
+        do GameScreen.displayResults(gameOver, resultString, computerString, playerString);
+        do GameScreen.scoreBanner(computerScore, playerScore);
+        // if game is over, display game over message
+        if (gameOver = 1) {
+            do Sys.wait(4000);
+            do GameScreen.gameOver(computerScore, playerScore);
+        }
+        return;
+    }
+
+    method int getCPUScore(){
+        return computerScore;
+    }
+
+    method int getPlayerScore(){
+        return playerScore;
+    }
+    method void dispose(){
+        do Memory.deAlloc(this);
+        return;
+    }
+}

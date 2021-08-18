@@ -1,0 +1,102 @@
+/**
+all functions except sort and swap expect the nums array to be sorted from min to max
+*/
+class Statistics {
+
+  function int sum(Array nums, int len) {
+    var int i;
+    var int sum;
+    let i = 0;
+    let sum = 0;
+    while(i < len) {
+      let sum = sum + nums[i];
+      let i = i + 1;
+    }
+    return sum;
+  }
+
+  function int mean(Array nums, int len) {
+    var int mean;
+    var int sum;
+    let sum = Statistics.sum(nums, len);
+    let mean = sum / len;
+    return mean;
+  }
+
+  function int median(Array nums, int len) {
+    var int median;
+    if((len / 2) = ((len - 1) / 2)) {
+      // odd len
+      let median = nums[len / 2];
+    } else {
+      let median = (nums[len / 2] + nums[(len + 1) / 2]) / 2;
+    }
+    return median;
+  }
+
+  /* the median of the left half of the sorted array */
+  function int firstQuartile(Array nums, int len) {
+    var int fq;
+    let fq = nums[len / 4];
+    return fq;
+  }
+
+  /* the median of the right half of the sorted array */
+  function int thirdQuartile(Array nums, int len) {
+    var int tq;
+    let tq = nums[((3 * len) / 4)];
+    return tq;
+  }
+
+  function Array swap(Array nums, int i, int j) {
+    var int temp;
+    let temp = nums[i];
+    let nums[i] = nums[j];
+    let nums[j] = temp;
+    return nums;
+  }
+
+  /* simple insertion sort using swap */
+  function Array sort(Array nums, int len) {
+    var int i;
+    var int j;
+    let i = 1;
+    while(i < len) {
+      let j = i;
+      while((j > 0) & (nums[j-1] > nums[j])) {
+        do Statistics.swap(nums, j, j-1);
+        let j = j - 1;
+      }
+      let i = i + 1;
+    }
+    return nums;
+  }
+
+  function int minimum(Array nums, int len) {
+    var int i;
+    var int min;
+    let min = nums[0];
+    let i = 0;
+    while(i < len) {
+      if(nums[i] < min) {
+        let min = nums[i];
+      }
+      let i = i + 1;
+    }
+    return min;
+  }
+
+  function int maximum(Array nums, int len) {
+    var int i;
+    var int max;
+    let max = nums[0];
+    let i = 0;
+    while(i < len) {
+      if(nums[i] > max) {
+        let max = nums[i];
+      }
+      let i = i + 1;
+    }
+    return max;
+  }
+}

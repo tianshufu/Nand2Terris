@@ -1,0 +1,37 @@
+class Boxplot {
+  field int minimum;
+  field int firstQuartile;
+  field int median;
+  field int thirdQuartile;
+  field int maximum;
+
+  constructor Boxplot new(int min, int fq, int med, int tq, int max) {
+    let minimum = min;
+    let firstQuartile = fq;
+    let median = med;
+    let thirdQuartile = tq;
+    let maximum = max;
+    return this;
+  }
+
+  method void draw() {
+    do Output.printString("Boxplot: ");
+    do Output.println();
+
+    // draw min, med, max
+    do Screen.drawLine(minimum * 16, 150, minimum * 16, 200);
+    do Screen.drawLine(maximum * 16, 150, maximum * 16, 200);
+    do Screen.drawLine(median * 16, 150, median * 16, 200);
+
+    // draw box
+    do Screen.drawLine(firstQuartile * 16, 150, firstQuartile * 16, 200);
+    do Screen.drawLine(firstQuartile * 16, 150, thirdQuartile * 16, 150);
+    do Screen.drawLine(thirdQuartile * 16, 150, thirdQuartile * 16, 200);
+    do Screen.drawLine(firstQuartile * 16, 200, thirdQuartile * 16, 200);
+
+    // draw middle axis
+    do Screen.drawLine(minimum * 16, 175, maximum * 16, 175);
+
+    return;
+  }
+}

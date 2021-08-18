@@ -1,0 +1,12 @@
+/** Initializes a new rock paper scissors game and runs a best of 5 match with the computer */
+class Main {
+    function void main() {
+        var RPSGame game;
+        let game = RPSGame.new();
+        while (~(game.getCPUScore() = 3) & ~(game.getPlayerScore() = 3)){
+            do game.playRound();
+        }
+        do game.dispose();
+        return;
+    }
+}

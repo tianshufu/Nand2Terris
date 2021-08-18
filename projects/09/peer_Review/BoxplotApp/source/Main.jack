@@ -1,0 +1,10 @@
+/** Starts the Boxplot app */
+class Main {
+    function void main() {
+        var BoxplotController controller;
+        let controller = BoxplotController.new();
+        do controller.run();
+        do controller.dispose();
+        return;
+    }
+}

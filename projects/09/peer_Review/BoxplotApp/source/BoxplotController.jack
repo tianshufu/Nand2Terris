@@ -1,0 +1,90 @@
+class BoxplotController {
+
+  field Array numbers;
+
+  constructor BoxplotController new() {
+    let numbers = Array.new(10);
+    return this;
+  }
+
+  method void dispose() {
+    do numbers.dispose();
+    do Memory.deAlloc(this);
+    return;
+  }
+
+  method void run() {
+    /* declare local variables */
+    var Boxplot boxplot;
+    var int i;
+    var int limit;
+    var String inputMessage;
+    var int minimum;
+    var int maximum;
+    var int firstQuartile;
+    var int thirdQuartile;
+    var int median;
+
+    /* clear screen and set color to black */
+    do Screen.clearScreen();
+    do Screen.setColor(true);
+
+    /* initialize loop variables */
+    let i = 0;
+    let limit = 5;
+    let inputMessage = String.new(64);
+
+    /* greet and instruct user */
+    do Output.printString("Hello user, please input 5 numbers in the range from 0 to 32.");
+    do Output.println();
+
+    /* let user initialize numbers array */
+    while(i < limit) {
+      let inputMessage = "Next number: ";
+      let numbers[i] = -2;
+      while((numbers[i] > 32) | (numbers[i] < -1)) {
+        let numbers[i] = Keyboard.readInt(inputMessage);
+        if((numbers[i] > 32) | (numbers[i] < -1)) {
+          let inputMessage = "Number was not in range [0, 32]. Try again: ";
+        }
+      }
+      let i = i + 1;
+    }
+
+    /* thank user for input */
+    do Output.printString("Thank you!");
+    do Output.println();
+    do Output.println();
+
+    /* show some simple statistics */
+    let numbers = Statistics.sort(numbers, limit);
+
+    let minimum = Statistics.minimum(numbers, limit);
+    do BoxplotController.printStatistic(minimum, "Minimum");
+
+    let median = Statistics.median(numbers, limit);
+    do BoxplotController.printStatistic(median, "Median");
+
+    let maximum = Statistics.maximum(numbers, limit);
+    do BoxplotController.printStatistic(maximum, "Maximum");
+
+    let firstQuartile = Statistics.firstQuartile(numbers, limit);
+    let thirdQuartile = Statistics.thirdQuartile(numbers, limit);
+
+    /* draw boxplot on right side of screen */
+    do Output.println();
+    let boxplot = Boxplot.new(minimum, firstQuartile, median, thirdQuartile, maximum);
+    do boxplot.draw();
+
+    do inputMessage.dispose();
+    return;
+  }
+
+  function void printStatistic(int f, String label) {
+    do Output.printString(label);
+    do Output.printString(": ");
+    do Output.printInt(f);
+    do Output.println();
+    return;
+  }
+}

@@ -1,0 +1,269 @@
+function Statistics.sum 2
+push constant 0
+pop local 0
+push constant 0
+pop local 1
+label WHILE_EXP0
+push local 0
+push argument 1
+lt
+not
+if-goto WHILE_END0
+push local 1
+push local 0
+push argument 0
+add
+pop pointer 1
+push that 0
+add
+pop local 1
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push local 1
+return
+function Statistics.mean 2
+push argument 0
+push argument 1
+call Statistics.sum 2
+pop local 1
+push local 1
+push argument 1
+call Math.divide 2
+pop local 0
+push local 0
+return
+function Statistics.median 1
+push argument 1
+push constant 2
+call Math.divide 2
+push argument 1
+push constant 1
+sub
+push constant 2
+call Math.divide 2
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push argument 1
+push constant 2
+call Math.divide 2
+push argument 0
+add
+pop pointer 1
+push that 0
+pop local 0
+goto IF_END0
+label IF_FALSE0
+push argument 1
+push constant 2
+call Math.divide 2
+push argument 0
+add
+pop pointer 1
+push that 0
+push argument 1
+push constant 1
+add
+push constant 2
+call Math.divide 2
+push argument 0
+add
+pop pointer 1
+push that 0
+add
+push constant 2
+call Math.divide 2
+pop local 0
+label IF_END0
+push local 0
+return
+function Statistics.firstQuartile 1
+push argument 1
+push constant 4
+call Math.divide 2
+push argument 0
+add
+pop pointer 1
+push that 0
+pop local 0
+push local 0
+return
+function Statistics.thirdQuartile 1
+push constant 3
+push argument 1
+call Math.multiply 2
+push constant 4
+call Math.divide 2
+push argument 0
+add
+pop pointer 1
+push that 0
+pop local 0
+push local 0
+return
+function Statistics.swap 1
+push argument 1
+push argument 0
+add
+pop pointer 1
+push that 0
+pop local 0
+push argument 1
+push argument 0
+add
+push argument 2
+push argument 0
+add
+pop pointer 1
+push that 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push argument 2
+push argument 0
+add
+push local 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push argument 0
+return
+function Statistics.sort 2
+push constant 1
+pop local 0
+label WHILE_EXP0
+push local 0
+push argument 1
+lt
+not
+if-goto WHILE_END0
+push local 0
+pop local 1
+label WHILE_EXP1
+push local 1
+push constant 0
+gt
+push local 1
+push constant 1
+sub
+push argument 0
+add
+pop pointer 1
+push that 0
+push local 1
+push argument 0
+add
+pop pointer 1
+push that 0
+gt
+and
+not
+if-goto WHILE_END1
+push argument 0
+push local 1
+push local 1
+push constant 1
+sub
+call Statistics.swap 3
+pop temp 0
+push local 1
+push constant 1
+sub
+pop local 1
+goto WHILE_EXP1
+label WHILE_END1
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push argument 0
+return
+function Statistics.minimum 2
+push constant 0
+push argument 0
+add
+pop pointer 1
+push that 0
+pop local 1
+push constant 0
+pop local 0
+label WHILE_EXP0
+push local 0
+push argument 1
+lt
+not
+if-goto WHILE_END0
+push local 0
+push argument 0
+add
+pop pointer 1
+push that 0
+push local 1
+lt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+push argument 0
+add
+pop pointer 1
+push that 0
+pop local 1
+label IF_FALSE0
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push local 1
+return
+function Statistics.maximum 2
+push constant 0
+push argument 0
+add
+pop pointer 1
+push that 0
+pop local 1
+push constant 0
+pop local 0
+label WHILE_EXP0
+push local 0
+push argument 1
+lt
+not
+if-goto WHILE_END0
+push local 0
+push argument 0
+add
+pop pointer 1
+push that 0
+push local 1
+gt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+push argument 0
+add
+pop pointer 1
+push that 0
+pop local 1
+label IF_FALSE0
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push local 1
+return

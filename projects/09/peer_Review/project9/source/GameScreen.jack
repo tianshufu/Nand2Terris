@@ -1,0 +1,91 @@
+/* Class for manipulating the screen during game x = 64, y = 23 border = 10 on , 3 on */
+class GameScreen {
+
+    /* draws border for LHS and top banners */
+    function void drawBorder(){
+        do Screen.drawLine(96,22,511,22);
+        do Screen.drawLine(96,22,96,255);
+        return;
+    }
+    /* displays computer and player score at top of screen */
+    function void scoreBanner(int computerScore, int playerScore){
+        do Output.moveCursor(0,13);
+        do Output.printString(" Computer Score: ");
+        do Output.printInt(computerScore);
+        do Output.printString(" Player Score: ");
+        do Output.printInt(playerScore);
+        return;
+    }
+    /* displays instructions for moves on LHS of screen */
+    function void instructionBanner(){
+        do Output.moveCursor(10,0);
+        do Output.printString("Moves:");
+        do Output.moveCursor(11,0);
+        do Output.printString("Rock [0]");
+        do Output.moveCursor(12,0);
+        do Output.printString("Paper [1]");
+        do Output.moveCursor(13,0);
+        do Output.printString("Scissors [2]");
+        return;
+    }
+    /* displays a welcome message in the main area of the screen */
+    function void welcome(){
+        do GameScreen.clearScreen();
+        do Output.moveCursor(11,20);
+        do Output.printString(" Welcome to Rock Paper Scissors! ");
+        do Output.moveCursor(12,20);
+        do Output.printString(" by Nand2TetrisGames ");
+        return;
+    }
+
+    /* Erases any text in main area of screen */
+    function void clearScreen(){
+        do Screen.setColor(false);
+        do Screen.drawRectangle(97,23,511,255);
+        do Screen.setColor(true);
+        return;
+    }
+
+    /* displays results of a single round in main area of scren */
+    function void displayResults(int gameOver, String resultString, String computerString, String playerString){
+        do GameScreen.clearScreen();
+        do Output.moveCursor(11,16);
+        do Output.printString("Computer Move: ");
+        do Output.printString(computerString);
+        do Output.moveCursor(13,16);
+        do Output.printString("Player Move: ");
+        do Output.printString(playerString);
+        do Output.moveCursor(15,16);
+        do Output.printString(resultString);
+        if (~ (gameOver = 1)){
+            do Output.moveCursor(17,16);
+            do Output.printString("Press spacebar for next round");
+        }
+        return;
+
+    }
+    /* displays game over message with final score */
+    function void gameOver(int computerScore, int playerScore){
+        do GameScreen.clearScreen();
+        if (computerScore > playerScore){
+            do Output.moveCursor(11,16);
+            do Output.printString("Computer Wins!");
+            do Output.moveCursor(12,16);
+            do Output.printString("Score: ");
+            do Output.printInt(computerScore);
+            do Output.printString("-");
+            do Output.printInt(playerScore);
+        }
+        else {
+            do Output.moveCursor(11,16);
+            do Output.printString("Player Wins!");
+            do Output.moveCursor(12,16);
+            do Output.printString("Score: ");
+            do Output.printInt(playerScore);
+            do Output.printString("-");
+            do Output.printInt(computerScore);
+        }
+        return;
+    }
+
+}

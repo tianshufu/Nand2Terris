@@ -1,0 +1,103 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/CPU.hdl
+
+/**
+ * The Hack CPU (Central Processing unit), consisting of an ALU,
+ * two registers named A and D, and a program counter named PC.
+ * The CPU is designed to fetch and execute instructions written in 
+ * the Hack machine language. In particular, functions as follows:
+ * Executes the inputted instruction according to the Hack machine 
+ * language specification. The D and A in the language specification
+ * refer to CPU-resident registers, while M refers to the external
+ * memory location addressed by A, i.e. to Memory[A]. The inM input 
+ * holds the value of this location. If the current instruction needs 
+ * to write a value to M, the value is placed in outM, the address 
+ * of the target location is placed in the addressM output, and the 
+ * writeM control bit is asserted. (When writeM==0, any value may 
+ * appear in outM). The outM and writeM outputs are combinational: 
+ * they are affected instantaneously by the execution of the current 
+ * instruction. The addressM and pc outputs are clocked: although they 
+ * are affected by the execution of the current instruction, they commit 
+ * to their new values only in the next time step. If reset==1 then the 
+ * CPU jumps to address 0 (i.e. pc is set to 0 in next time step) rather 
+ * than to the address resulting from executing the current instruction. 
+ */
+
+CHIP CPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M? 
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+    // Put your code here:
+
+    //instruction decoding  instruction[15]==0: A  else: C
+    Mux16(a=instruction,b=outALU,sel=instruction[15],out=instructAorC);
+    //For ramA  T= instruction[15] or not instruction[3]
+    Not(in=instruction[15],out=notInstruction);
+    //for c instruction,when d3 is true,also store the value in ramA   
+    Not(in=instruction[3],out=notInstruction3);
+    Or(a=notInstruction,b=instruction[5],out=ramAFlag);
+    //store the value in the ARegister based on ramAFlag, make [0..14] to the address output
+    ARegister(in=instructAorC,load=ramAFlag,out=ARegisterOut,out[0..14]=addressM);
+
+    //WriteM
+    And(a=instruction[15], b=instruction[3], out=writeM);
+
+    // instruction[12] decide the input data is from A register or Memmory 0:A , 1:M
+    Mux16(a=ARegisterOut,b=inM,sel=instruction[12],out=ARegisterOrM);
+
+    //use instruction[4] to decide whether store new data in D register, or keep the same
+    DRegister(in=outALU,load=instruction[4],out=DRegisterOut);
+
+    //if is the A instruction, the ALU should output D, in this case, D will not change, therefore, if address[15]==0, defalut : 0,0,1,1,0,0
+    And(a=instruction[11],b=instruction[15],out=zx) ;//  if address[15]==0, zx=0, else: zx= instruction[11]
+    And(a=instruction[10],b=instruction[15],out=nx) ;//  if address[15]==0, zx=0, else: nx= instruction[10]
+    Or(a=instruction[9],b=notInstruction,out=zy)   ;     //if address[15]==0, zx=1, else: zy= instruction[9]
+    Or(a=instruction[8],b=notInstruction,out=ny) ;//if address[15]==0, zx=1, else: ny= instruction[8]
+    And(a=instruction[7],b=instruction[15],out=f) ; //if address[15]==0, zx=0, else: f= instruction[7]
+    And(a=instruction[6],b=instruction[15],out=no) ;//if address[15]==0, zx=0, else: no= instruction[6]
+
+
+
+
+    //ALU
+    ALU(x=DRegisterOut,y=ARegisterOrM,zx=zx,nx=nx,zy=zy,ny=ny,f=f,no=no,out=outALU,out=outM,zr=zr ,ng=ng);
+
+    //out>0   if out>0, outbig=1, else 0
+    Or(a=zr,b=ng,out=notoutBigger0);
+    Not(in=notoutBigger0,out=outBigger0);
+    //out>=0  if out>=0, outBiggerAndEqual0=1, else 0
+    Not(in=ng,out=outBiggerAndEqual0);
+    
+    //copmute the basic condition
+    //negative  j2&ng
+    And(a=instruction[2],b=ng,out=negative);
+    //equals 0
+    And(a=instruction[1],b=zr,out=equal0);
+    //positive
+    And(a=instruction[0],b=outBigger0,out=positive);
+    // negative ||  positive || equals0 
+    Or(a=negative,b=equal0,out=tmp1);
+    Or(a=positive,b=tmp1,out=tmp2);
+    // tmp2 and address[0]  if c ,jimp
+    And(a=tmp2,b=instruction[15],out=jump);
+    // Deicde whether to jump or not
+    PC(in=ARegisterOut, reset=reset, load=jump, inc=true, out[0..14]=pc);
+
+
+
+
+}
+
+

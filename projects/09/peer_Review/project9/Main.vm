@@ -1,0 +1,27 @@
+function Main.main 1
+call RPSGame.new 0
+pop local 0
+label WHILE_EXP0
+push local 0
+call RPSGame.getCPUScore 1
+push constant 3
+eq
+not
+push local 0
+call RPSGame.getPlayerScore 1
+push constant 3
+eq
+not
+and
+not
+if-goto WHILE_END0
+push local 0
+call RPSGame.playRound 1
+pop temp 0
+goto WHILE_EXP0
+label WHILE_END0
+push local 0
+call RPSGame.dispose 1
+pop temp 0
+push constant 0
+return
